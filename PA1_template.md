@@ -4,14 +4,16 @@ output: html_document
 ---
 
 **0.Loading and preprocessing the data.**
-```{r}
+
+```r
 rawdata0 <- read.csv("activity.csv", na.strings = "NA")
 good <- complete.cases(rawdata0)
 rawdata <- rawdata0[good,]
 ```
 
 **1.What is mean total number of steps taken per day?**
-```{r}
+
+```r
 library(ggplot2)
 data <- rawdata
 date <- data[1,2]
@@ -27,29 +29,43 @@ while(nrow(data) != 0) {
 }
 df <- data.frame(num = result, date = dates)
 qplot(x = num, data = df, geom = "histogram", xlab = "Total number of steps taken per day")
+```
+
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
+```r
 x <- mean(df$num)
 y <- median(df$num)
 ```
 
-Thus, the meanof the total number of steps taken per day is `r x` and the median number is `r y`.
+Thus, the meanof the total number of steps taken per day is 1.0766189 &times; 10<sup>4</sup> and the median number is 10765.
 
 **2.What is the average daily activity pattern?**
 
 To be honest, I don't understand this question.
 Hope the following answer is the required answer.
-```{r}
+
+```r
 aveNum <- rawdata$steps/days
 qplot(x = rawdata$interval, y = aveNum, ylab = "Average number of steps", xlab = "Intervals", geom = "line")
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
 **3.Imputing missing values**
-```{r}
+
+```r
 num_of_NAS <- nrow(rawdata0) - nrow(rawdata)
 ```
-Hence, the number of missing values is `r num_of_NAS`.
+Hence, the number of missing values is 2304.
 
 I'm going to fill the NAs by using the mean for that day.
-```{r}
+
+```r
 newData <- rawdata0
 i <- 1
 while(i <= nrow(rawdata0)) {
@@ -74,16 +90,26 @@ while(nrow(newData1) != 0) {
 }
 n_df <- data.frame(num = n_result, date = n_dates)
 qplot(x = num, data = n_df, geom = "histogram", xlab = "Total number of steps taken per day")
+```
+
+```
+## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
+```r
 new_mean <- mean(n_df$num)
 new_median <- median(n_df$num)
 ```
 
-Thus, the meanof the total number of steps taken per day is `r new_mean` and the median number is `r new_median`.
+Thus, the meanof the total number of steps taken per day is 1.0766033 &times; 10<sup>4</sup> and the median number is 1.0765 &times; 10<sup>4</sup>.
 
 We can see that after imputing missing values, the height of the histogram is bigger.
 
 **4.Are there differences in activity patterns between weekdays and weekends?**
-```{r}
+
+```r
 data4 <- rawdata
 data_weekday <- weekdays(as.Date(data4$date))
 data4 <- cbind(data4, data_weekday)
@@ -119,6 +145,8 @@ n_df <- data.frame(step = c(steps_1, steps_2), interval = intervals_, weekday = 
 library(lattice)
 xyplot(step ~ interval | weekday, data = n_df, layout = c(1, 2), type = "l")
 ```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
 That's all my friend.
 
